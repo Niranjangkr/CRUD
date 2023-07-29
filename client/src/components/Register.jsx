@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { addData } from './context/ContextProvider'
 
 const Register = () => {
+    const {udata, setUdata} = useContext(addData)
     const navigate = useNavigate()
     const [ formData, setFormData ] = React.useState({
         name: "",
@@ -48,6 +50,7 @@ const Register = () => {
         }else{
             alert("Data added Succesfully")
             console.log("data added")
+            setUdata(data )
             navigate('/')
         }
     }

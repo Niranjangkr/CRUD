@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { NavLink, useParams, useNavigate } from 'react-router-dom';
-
+import { updateData } from './context/ContextProvider';
 const Edit = () => {
-    
+    const {upData, setUpData } = useContext(updateData)
     const Navigate = useNavigate() 
 
     const {id} = useParams('')
@@ -72,6 +72,7 @@ const Edit = () => {
             alert("fill the data")
         }else{
             alert("data added")
+            setUpData(data)
             Navigate('/')
         }
     }
