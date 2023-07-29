@@ -1,7 +1,8 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 const Register = () => {
+    const navigate = useNavigate()
     const [ formData, setFormData ] = React.useState({
         name: "",
         email: "",
@@ -47,6 +48,7 @@ const Register = () => {
         }else{
             alert("Data added Succesfully")
             console.log("data added")
+            navigate('/')
         }
     }
 

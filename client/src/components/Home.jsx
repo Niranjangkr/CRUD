@@ -29,6 +29,22 @@ const Home = () => {
   }, [])
 
 
+  const deleteDoc = async (_id) => {
+    const res = await fetch(`http://localhost:5000/deleteuser/${_id}`, {
+      method: "DELETE",
+      headers:{
+        "Content-type":"application/json"
+      }
+    })
+    const data = await res.json()
+    console.log(data)
+    if(res.status===500){
+      alert(error, "Invalid entry")
+    }else{
+      console.log("data deleted")
+      getData()
+    }
+  }
 
   return (
     <div className="mt-5">
@@ -59,7 +75,7 @@ const Home = () => {
               <td className='d-flex justify-content-between'>
                 <NavLink to={`view/${data._id}`}><button type='button' className='btn btn-primary '><RemoveRedEyeIcon /></button></NavLink>
                 <NavLink to={`edit/${data._id}`}><button type='button' className='btn btn-success '><EditIcon /></button></NavLink>
-                <button type='button' className='btn btn-danger '><DeleteIcon /></button>
+                <button type='button' className='btn btn-danger' onClick={() => deleteDoc(data._id)}><DeleteIcon /></button>
               </td>
             </tr>
              ))

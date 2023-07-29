@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { NavLink, useParams } from 'react-router-dom';
+import { NavLink, useParams, useNavigate } from 'react-router-dom';
 
 const Edit = () => {
+    
+    const Navigate = useNavigate() 
 
     const {id} = useParams('')
 
@@ -49,46 +51,34 @@ const Edit = () => {
     }, [])
 
     useEffect(() =>{
-        setFormData({
-            name: userData.name,
-            email: userData.email,
-            age: userData.age,
-            mobile: userData.mobile,
-            work: userData.work,
-            address: userData.address,
-            description: userData.description
-        })
+        setFormData(userData )
     }, [userData])
     
     const submitForm = async(e) =>{
-        e.preventDefault()
-
         const { name, age, mobile, work, address, description } = formData
-        console.log("helo")
-
-        const res = await fetch(`http://localhost:5000/updateData/${id}`, {
+        e.preventDefault()
+        const res = await fetch(`http://localhost:5000/updateuser/${id}`, {
             method: "PATCH",
             headers:{
-               "content-type": "application/json"
+                "content-type":"application/json"
             },
-            body: JSON.stringify({
+            body:JSON.stringify({
                 name, age, mobile, work, address, description 
             })
         })
-
-        const data2 = await res.json()
-        console.log(data2)
-        if(res.status === 500 || !data2){
+        const data = await res.json()
+        console.log(data)
+        if(res.status === 500 || !data){
             alert("fill the data")
         }else{
             alert("data added")
+            Navigate('/')
         }
     }
     
 
     return (
         <div className="container ">
-            <NavLink to='/'>Home2</NavLink>
             <form className='mt-4' onSubmit={submitForm}>
                 <div className="row">
                     <div className="mb-3 col-lg-6 col-md-6 col12">

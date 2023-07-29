@@ -1,85 +1,97 @@
-const express = require('express')
-const router = express.Router()
-const users = require('../models/userSchema')
+const express = require("express");
+const router = express.Router();
+const users = require("../models/userSchema");
 
 //register user
-router.post('/register', async (req, res) => { 
-  const { name, email, age, mobile, work, address, description } = req.body
-  if(!name || !email || !age || !mobile || !work || !address || !description ){
-    res.status(422).json("Please fill all the details")
+router.post("/register", async (req, res) => {
+  const { name, email, age, mobile, work, address, description } = req.body;
+  if (!name || !email || !age || !mobile || !work || !address || !description) {
+    res.status(422).json("Please fill all the details");
   }
   try {
-    const preUser = await users.findOne({email})
-    if(preUser){
-      return res.status(422).json("user already present")
+    const preUser = await users.findOne({ email });
+    if (preUser) {
+      return res.status(422).json("user already present");
     }
     const addUser = new users({
-      name, email, age, mobile, work, address, description
-    }) 
-    await addUser.save()
-    return res.status(201).json(addUser)
+      name,
+      email,
+      age,
+      mobile,
+      work,
+      address,
+      description,
+    });
+    await addUser.save();
+    return res.status(201).json(addUser);
   } catch (error) {
-    return res.status(500).json("Internal server error")
+    return res.status(500).json("Internal server error");
   }
-})
+});
 
 // get user data
-router.get('/getData', async (req, res) => {
+router.get("/getData", async (req, res) => {
   try {
-    const userData = await users.find()
-    return res.status(201).json(userData)
+    const userData = await users.find();
+    return res.status(201).json(userData);
   } catch (error) {
-    res.status(500).json("internal server error")
+    res.status(500).json("internal server error");
   }
-})
-
+});
 
 //  check about the return statement when to include or not
 // get single user detail
-router.get('/getUserData/:id', async (req, res) => {
-   const id = req.params.id
-   try {
-    const userData = await users.findById({_id:id})
-    if(!userData){
-      res.status(422).json("Invalid Id")
-    }else{
-      res.status(201).json(userData)
+router.get("/getUserData/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const userData = await users.findById({ _id: id });
+    if (!userData) {
+      res.status(422).json({error: "Invalid Id"});
+    } else {
+      res.status(201).json(userData);
     }
-   } catch (error) {
-    res.status(500).json({error:"Internal server error"})
-   }
-})
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 // update user
-router.patch('/udpateData/:id', async (req, res) => {
+router.patch('/updateuser/:id', async (req, res) => {
   try {
-    const id = req.params.id
-    const updatedUser = await users.findByIdAndUpdate(id, req.body, {
-      new: true
+    const _id = req.params.id
+    const { name, email, age, mobile, work, address, description } = req.body;
+    const data = await users.updateOne({_id}, {
+        $set : {
+          name: name,
+          email: email,
+          age: age,
+          mobile: mobile,
+          work: work,
+          address: address,
+          description: description
+        }
     })
-    console.log(updatedUser)
-    res.status(200).json(updatedUser);
+    res.status(201).json(data)
   } catch (error) {
-    res.status(500).json({error:"Internal server error"})
+    res.status(422).json("internal server error")
   }
 })
 
-module.exports = router
+// delete user
+router.delete('/deleteuser/:id', async (req, res) => {
+  const _id = req.params.id
+  try {
+     const data = await users.deleteOne({_id})
+     res.status(201).json(data)
+  } catch (error) {
+    const statusCode = error.code || 500
+    const statusMessage = statusCode == 500? "Internal server error" : "not found"
+    res.status(statusCode).json({error : statusMessage})
+  }
+})
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+module.exports = router;
 
 // const express = require("express");
 // const router = express.Router();
@@ -147,8 +159,7 @@ module.exports = router
 //   }
 // })
 
-
-// // update data 
+// // update data
 // router.patch('/updateData/:id', async (req, res) => {
 //   try {
 //     const { id } = this.param.id
